@@ -16,3 +16,13 @@ cities = [
     "Kigali"
 ]
 
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
+weather_url = f'http://api.openweathermap.org/data/2.5/forecast?id=524901&appid={WEATHER_API_KEY}'
+
+response = requests.get(weather_url)
+
+if response.status_code == 200:
+    print(response)
+else:
+    print("error")
