@@ -22,7 +22,9 @@ weather_url = f'http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=
 
 response = requests.get(weather_url)
 
+data = response.json()
+
 if response.status_code == 200:
-    print(response)
+    print(data)
 else:
     print("error")
