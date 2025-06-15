@@ -16,3 +16,27 @@ consumer_config = {
 }
 
 consumer = Consumer(consumer_config)
+consumer.subscribe(['mawingu'])
+
+print("Consuming from the topic...")
+
+
+try:
+    while True:
+        msg = consumer.poll(1.0)
+        if msg is None:
+            continue
+        if msg.error():
+            print("Consumer error", msg.error())
+            continue
+        
+        value = msg.value().decode('utf-8')
+        key = msg.key().decode('utf-8') if msg.key() else "null"
+        
+        print(f"Consumed weather for {key}:")
+        print(json.dumps(json.loads(value), indent=2))
+
+except KeyboardInterrupt:
+    pass
+finally:
+    consumer.close()
