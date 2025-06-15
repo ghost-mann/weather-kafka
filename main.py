@@ -34,6 +34,12 @@ producer = Producer(kafka_config)
 # topic name 
 topic = "mawingu"
 
+# delivery report callback 
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Delivery failed for record {msg.key()}: {err}3")
+    else:
+        print(f"Record successfully produced to {msg.topic()} [{msg.partition()}] @ offset {msg.offset()}")
 
 # loop through the cities list 
 for city in cities:
