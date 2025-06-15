@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import requests
 import json
 from datetime import datetime
-from confluent_kafka.admin import AdminClient
+from confluent_kafka import Producer
 
 # initialize env variables
 load_dotenv()
@@ -28,8 +28,11 @@ kafka_config = {
     "sasl.password": os.getenv('KAFKA_API_SECRET')    
 }
 
-# create admin client
-admin_client = AdminClient(kafka_config)
+# initialize kafka producer 
+producer = Producer(kafka_config)
+
+# topic name 
+topic = "mawingu"
 
 
 # loop through the cities list 
