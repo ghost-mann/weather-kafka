@@ -45,11 +45,22 @@ def delivery_report(err, msg):
 for city in cities:
     weather_url = f'http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={WEATHER_API_KEY}'
     response = requests.get(weather_url)
-    data = response.json()
+    
 
     if response.status_code == 200:
-        print(f"Weather for {city}:")
-        # converts json into string
-        print(json.dumps(data, indent=2))
+        data = response.json()
+        weather_json = json.dumps(data)
+        
+        # send data to kafka topic 
+        producer.produce(
+            topic=topic,
+            key=city,
+            value=weather_json,
+            callback = delivery_report
+        )
+        producer.poll[0]
+        
     else:
         print(f"Failed for {city}: {response.status_code}")
+
+producer.flush()
