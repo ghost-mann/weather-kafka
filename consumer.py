@@ -68,6 +68,18 @@ try:
         value = msg.value().decode('utf-8')
         key = msg.key().decode('utf-8') if msg.key() else "null"
         
+        if value:
+            decoded_value = value.decode('utf-8')
+            try:
+                json_obj = json.loads(decoded_value)
+                print(f"Consumed weather for {key}:")
+                print(json.dumps(json_obj, indent=2))
+            except json.JSONDecodeError as e:
+                print(f"Invalid JSON from topic for key '{key}': {decoded_value}")
+                print("JSONDecodeError:", e)
+        else:
+            print(f"Received empty message for key '{key}'")
+        
         print(f"Consumed weather for {key}:")
         print(json.dumps(json.loads(value), indent=2))
 
