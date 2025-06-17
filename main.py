@@ -58,7 +58,7 @@ for city in cities:
             value=weather_json,
             callback = delivery_report
         )
-        producer.poll[0]
+        producer.poll(0)
         
     else:
         print(f"Failed for {city}: {response.status_code}")
