@@ -47,20 +47,28 @@ for city in cities:
     response = requests.get(weather_url)
     
 
-    if response.status_code == 200:
+if response.status_code == 200:
         data = response.json()
-        weather_json = json.dumps(data)
-        
-        # send data to kafka topic 
-        producer.produce(
-            topic=topic,
-            key=city,
-            value=weather_json,
-            callback = delivery_report
-        )
-        producer.poll(0)
-        
-    else:
+        try:
+            forecast = data['list'][0]  # Get the first forecast entry
+            weather_payload = {
+                "city": city,
+                "timestamp": forecast['dt_txt'],  # e.g. '2025-06-17 18:00:00'
+                "temperature": forecast['main']['temp'],  # e.g. 25.3
+                "description": forecast['weather'][0]['description']  # e.g. 'light rain'
+            }
+
+            producer.produce(
+                topic=topic,
+                key=city,
+                value=json.dumps(weather_payload),
+                callback=delivery_report
+            )
+            producer.poll(0)
+
+        except KeyError as e:
+            print(f"Malformed response for {city}: {e}")
+else:
         print(f"Failed for {city}: {response.status_code}")
 
 producer.flush()
